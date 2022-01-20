@@ -1,10 +1,12 @@
-import { Body, Controller, Post, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Post, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiConsumes } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthLoginDto } from './dto/auth.login.dto';
 
 @Controller('auth')
+@UsePipes(new ValidationPipe())
+// @ApiBearerAuth()
 export class AuthController {
 
     constructor(private authService:AuthService){
@@ -16,8 +18,8 @@ export class AuthController {
     @UseInterceptors(FileInterceptor(''))
     async login(@Body() loginDto: AuthLoginDto){
         // console.log(loginDto)
-        const user =  this.authService.validateUser(loginDto);
-// console.log(user)
+        const user = await this.authService.validateUser(loginDto);
+        // console.log(user)
         if(user) return this.authService.login(user);
         else return false;
     }

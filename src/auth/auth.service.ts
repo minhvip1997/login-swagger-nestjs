@@ -21,7 +21,7 @@ export class AuthService {
 
   async validateUser(authLoginDto: AuthLoginDto): Promise<User> {
     const user = await this.userService.findOne(authLoginDto.username);
-        console.log(authLoginDto.username)
+        // console.log(user)
         if(!await bcrypt.compare(authLoginDto.password, user.password)){
           throw new BadRequestException('invalid credentials');
         }
@@ -35,6 +35,7 @@ export class AuthService {
   async login(user: any) {
     // console.log(user)
     const payload = { username: user.username, sub: user.id, roles: user.roles };
+    // console.log(payload)
     return {
       access_token: this.jwtService.sign(payload),
       // user

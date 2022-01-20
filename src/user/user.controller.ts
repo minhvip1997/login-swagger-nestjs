@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Param, Post, Put, UseGuards, UseInterceptors } from '@nestjs/common';
-import { ApiConsumes } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import * as bcrypt from 'bcrypt';
@@ -11,14 +11,18 @@ import { Roles } from './roles.decorator';
 import { Role } from './entities/role.enum';
 
 @Controller('user')
+
 export class UserController {
 
     constructor(private readonly userService: UserService){}
 
+
+
     @Post('create')
     @ApiConsumes('multipart/form-data')
     // @Roles(Role.Admin)
-    // @UseGuards(JwtAuthGuard, RolesGuard)
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
     @UseInterceptors(FileInterceptor(''))
     async createUser(@Body() dto: CreateUserDto): Promise<CreateUserDto>{
         // console.log(dto)
